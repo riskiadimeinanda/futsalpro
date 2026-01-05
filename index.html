@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futsal Booking System</title>
+    <style>
+        /* CSS tetap sama seperti sebelumnya */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #e74c3c;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        .nav-menu li {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-menu li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-menu li.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .btn-outline:hover {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #e74c3c;
+        }
+
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .time-slot {
+            padding: 12px;
+            text-align: center;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .time-slot:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+        }
+
+        .time-slot.selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .time-slot.booked {
+            background-color: #e74c3c;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .time-slot.available {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .pitch-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .pitch-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .pitch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .pitch-image {
+            height: 180px;
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .pitch-info {
+            padding: 20px;
+        }
+
+        .pitch-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .pitch-info p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .price {
+            color: #e74c3c;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .booking-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 5px solid #3498db;
+            transition: transform 0.3s;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status.confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status.cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-section p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        .user-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-details h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+            border-top: 1px solid #ecf0f1;
+            background: white;
+            border-radius: 10px 10px 0 0;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .time-slots {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <h1>Futsal<span>Pro</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li id="nav-home" class="active">🏠 Beranda</li>
+                <li id="nav-pitches">⚽ Lapangan</li>
+                <li id="nav-bookings">📋 Booking Saya</li>
+                <li id="nav-new-booking">➕ Booking Baru</li>
+            </ul>
+            <div class="auth-buttons">
+                <button id="btn-login" class="btn btn-primary">Login</button>
+                <button id="btn-logout" class="btn btn-outline hidden">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Login Form -->
+        <div id="login-section" class="card">
+            <h2>🔐 Login ke Akun Anda</h2>
+            <div id="login-message" class="alert hidden"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">📧 Email</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="masukkan email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">🔑 Password</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="masukkan password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="button" id="btn-show-register" class="btn btn-outline">Buat Akun Baru</button>
+            </form>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-section" class="card hidden">
+            <h2>📝 Daftar Akun Baru</h2>
+            <div id="register-message" class="alert hidden"></div>
+            <form id="register-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="register-name">👤 Nama Lengkap</label>
+                        <input type="text" id="register-name" class="form-control" placeholder="masukkan nama lengkap" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-phone">📱 Nomor Telepon</label>
+                        <input type="tel" id="register-phone" class="form-control" placeholder="masukkan nomor telepon" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">📧 Email</label>
+                    <input type="email" id="register-email" class="form-control" placeholder="masukkan email" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="register-password">🔑 Password</label>
+                        <input type="password" id="register-password" class="form-control" placeholder="buat password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">🔑 Konfirmasi Password</label>
+                        <input type="password" id="register-confirm-password" class="form-control" placeholder="ulangi password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Daftar</button>
+                <button type="button" id="btn-show-login" class="btn btn-outline">Sudah Punya Akun?</button>
+            </form>
+        </div>
+
+        <!-- Main Content (shown after login) -->
+        <div id="main-content" class="hidden">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h2>Selamat Datang di Futsal<span>Pro</span>!</h2>
+                <p>Booking lapangan futsal favorit Anda dengan mudah dan cepat. Nikmati pengalaman bermain futsal terbaik dengan sistem booking yang modern.</p>
+                <button id="btn-new-booking" class="btn btn-primary" style="font-size: 18px; padding: 15px 30px;">
+                    🎯 Booking Lapangan Sekarang
+                </button>
+            </div>
+
+            <!-- User Panel -->
+            <div class="user-panel">
+                <div class="user-info">
+                    <div class="user-details">
+                        <h3>👋 Halo, <span id="user-display-name">Pengguna</span>!</h3>
+                        <p>📧 <span id="user-display-email">-</span> | 📱 <span id="user-display-phone">-</span></p>
+                    </div>
+                    <div>
+                        <button id="btn-quick-booking" class="btn btn-secondary">⚡ Booking Cepat</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Sections -->
+            <div id="home-section">
+                <div class="card">
+                    <h2>⚽ Lapangan Tersedia</h2>
+                    <div class="pitch-list" id="available-pitches">
+                        <!-- Pitch cards will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📊 Booking Terbaru</h2>
+                    <div class="booking-grid" id="recent-bookings">
+                        <!-- Recent bookings will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="pitches-section" class="hidden">
+                <div class="card">
+                    <h2>🏟️ Semua Lapangan</h2>
+                    <div class="pitch-list" id="all-pitches">
+                        <!-- All pitch cards will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="bookings-section" class="hidden">
+                <div class="card">
+                    <h2>📋 Riwayat Booking Saya</h2>
+                    <div id="bookings-message" class="alert hidden"></div>
+                    <div class="booking-grid" id="user-bookings">
+                        <!-- User bookings will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="new-booking-section" class="hidden">
+                <div class="card">
+                    <h2>➕ Buat Booking Baru</h2>
+                    <div id="booking-message" class="alert hidden"></div>
+                    <form id="booking-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="booking-pitch">🏟️ Pilih Lapangan</label>
+                                <select id="booking-pitch" class="form-control" required>
+                                    <option value="">-- Pilih Lapangan --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="booking-date">📅 Tanggal Booking</label>
+                                <input type="date" id="booking-date" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>⏰ Pilih Waktu Mulai</label>
+                            <div class="time-slots" id="time-slots">
+                                <div style="grid-column: 1/-1; text-align: center; padding: 20px; color: #666;">
+                                    Pilih lapangan dan tanggal terlebih dahulu
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="booking-duration">⏱️ Durasi (jam)</label>
+                                <select id="booking-duration" class="form-control" required>
+                                    <option value="1">1 Jam</option>
+                                    <option value="2" selected>2 Jam</option>
+                                    <option value="3">3 Jam</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="booking-total">💰 Total Biaya</label>
+                                <input type="text" id="booking-total" class="form-control" readonly value="Rp 0">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">✅ Konfirmasi Booking</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 FutsalPro - Sistem Booking Lapangan Futsal</p>
+            <p style="margin-top: 10px; font-size: 14px; color: #95a5a6;">
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== KELAS OOP ====================
+        
+        class User {
+            #password;
+
+            constructor(id, name, email, phone, password) {
+                this.id = id;
+                this.name = name;
+                this.email = email;
+                this.phone = phone;
+                this.#password = password;
+                this.bookings = [];
+                this.createdAt = new Date().toISOString();
+            }
+
+            getPassword() {
+                return this.#password;
+            }
+
+            verifyPassword(password) {
+                return this.#password === password;
+            }
+
+            addBooking(booking) {
+                this.bookings.push(booking);
+            }
+
+            getBookings() {
+                return this.bookings;
+            }
+        }
+
+        class Admin extends User {
+            constructor(id, name, email, phone, password) {
+                super(id, name, email, phone, password);
+                this.role = 'admin';
+            }
+        }
+
+        // KELAS LAPANGAN - DIPERBAIKI
+        class FutsalPitch {
+            constructor(id, name, type, pricePerHour, facilities = [], description = '') {
+                this.id = id;
+                this.name = name;
+                this.type = type;
+                this.pricePerHour = pricePerHour;
+                this.facilities = facilities;
+                this.description = description;
+                this.bookedSlots = {}; // { '2024-01-01': ['8-10', '14-16'] }
+            }
+
+            // Method sederhana untuk cek ketersediaan
+            isAvailable(date, startTime, duration = 1) {
+                // Jika tidak ada booking di tanggal tersebut, langsung tersedia
+                if (!this.bookedSlots[date] || this.bookedSlots[date].length === 0) {
+                    return true;
+                }
+
+                const startHour = parseInt(startTime.split(':')[0]);
+                const endHour = startHour + duration;
+                
+                // Cek setiap booking yang ada
+                for (const bookedSlot of this.bookedSlots[date]) {
+                    const [bookedStart, bookedEnd] = bookedSlot.split('-').map(h => parseInt(h));
+                    
+                    // Cek overlap
+                    if (startHour >= bookedStart && startHour < bookedEnd) {
+                        return false;
+                    }
+                    if (endHour > bookedStart && endHour <= bookedEnd) {
+                        return false;
+                    }
+                    if (startHour <= bookedStart && endHour >= bookedEnd) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+
+            // Method untuk booking waktu
+            bookTime(date, startTime, duration = 1) {
+                if (!this.isAvailable(date, startTime, duration)) {
+                    return false;
+                }
+
+                const startHour = parseInt(startTime.split(':')[0]);
+                const endHour = startHour + duration;
+                
+                if (!this.bookedSlots[date]) {
+                    this.bookedSlots[date] = [];
+                }
+                
+                this.bookedSlots[date].push(`${startHour}-${endHour}`);
+                return true;
+            }
+
+            // Method untuk mendapatkan slot yang tersedia - DIPERBAIKI
+            getAvailableSlots(date, duration = 1) {
+                const availableSlots = [];
+                
+                // Jam operasional: 8:00 - 22:00
+                for (let hour = 8; hour <= 22; hour++) {
+                    // Skip jika melebihi jam tutup
+                    if (hour + duration > 22) continue;
+                    
+                    const time = `${hour.toString().padStart(2, '0')}:00`;
+                    
+                    if (this.isAvailable(date, time, duration)) {
+                        availableSlots.push(time);
+                    }
+                }
+                
+                return availableSlots;
+            }
+
+            calculatePrice(duration) {
+                return this.pricePerHour * duration;
+            }
+        }
+
+        class Booking {
+            constructor(id, userId, pitchId, pitchName, date, time, duration, totalPrice, status = 'pending') {
+                this.id = id;
+                this.userId = userId;
+                this.pitchId = pitchId;
+                this.pitchName = pitchName;
+                this.date = date;
+                this.time = time;
+                this.duration = duration;
+                this.totalPrice = totalPrice;
+                this.status = status;
+                this.createdAt = new Date().toISOString();
+            }
+        }
+
+        // ==================== APLIKASI UTAMA ====================
+        class FutsalBookingApp {
+            constructor() {
+                this.currentUser = null;
+                this.users = [];
+                this.pitches = [];
+                this.init();
+            }
+
+            init() {
+                this.loadData();
+                this.setupEventListeners();
+                this.loadPitches();
+                this.setDefaultDate();
+                this.updateUI();
+            }
+
+            setupEventListeners() {
+                // Navigation
+                document.getElementById('nav-home').addEventListener('click', () => {
+                    if (this.currentUser) this.showSection('home-section');
+                });
+                document.getElementById('nav-pitches').addEventListener('click', () => {
+                    if (this.currentUser) this.showSection('pitches-section');
+                });
+                document.getElementById('nav-bookings').addEventListener('click', () => {
+                    if (this.currentUser) this.showSection('bookings-section');
+                });
+                document.getElementById('nav-new-booking').addEventListener('click', () => {
+                    if (this.currentUser) this.showSection('new-booking-section');
+                });
+
+                // Auth buttons
+                document.getElementById('btn-login').addEventListener('click', () => this.showLogin());
+                document.getElementById('btn-logout').addEventListener('click', () => this.logout());
+                document.getElementById('btn-show-register').addEventListener('click', () => this.showRegister());
+                document.getElementById('btn-show-login').addEventListener('click', () => this.showLogin());
+                document.getElementById('btn-new-booking').addEventListener('click', () => {
+                    if (this.currentUser) this.showSection('new-booking-section');
+                });
+                document.getElementById('btn-quick-booking').addEventListener('click', () => {
+                    if (this.currentUser) this.showSection('new-booking-section');
+                });
+
+                // Forms
+                document.getElementById('login-form').addEventListener('submit', (e) => this.handleLogin(e));
+                document.getElementById('register-form').addEventListener('submit', (e) => this.handleRegister(e));
+                document.getElementById('booking-form').addEventListener('submit', (e) => this.handleBooking(e));
+
+                // Booking form
+                document.getElementById('booking-pitch').addEventListener('change', () => this.updateTimeSlots());
+                document.getElementById('booking-date').addEventListener('change', () => this.updateTimeSlots());
+                document.getElementById('booking-duration').addEventListener('change', () => {
+                    this.updateTimeSlots();
+                    this.updateTotalPrice();
+                });
+            }
+
+            setDefaultDate() {
+                const dateInput = document.getElementById('booking-date');
+                if (dateInput) {
+                    const today = new Date();
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    
+                    const todayStr = today.toISOString().split('T')[0];
+                    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+                    
+                    dateInput.min = todayStr;
+                    dateInput.value = tomorrowStr;
+                }
+            }
+
+            showSection(sectionId) {
+                // Hide all sections
+                ['home-section', 'pitches-section', 'bookings-section', 'new-booking-section'].forEach(id => {
+                    document.getElementById(id).classList.add('hidden');
+                });
+
+                // Hide auth sections
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('register-section').classList.add('hidden');
+
+                // Show main content
+                document.getElementById('main-content').classList.remove('hidden');
+
+                // Show target section
+                document.getElementById(sectionId).classList.remove('hidden');
+
+                // Update content
+                if (sectionId === 'bookings-section') {
+                    this.showUserBookings();
+                } else if (sectionId === 'new-booking-section') {
+                    this.initBookingForm();
+                } else if (sectionId === 'home-section') {
+                    this.showRecentBookings();
+                    this.renderAvailablePitches();
+                } else if (sectionId === 'pitches-section') {
+                    this.renderAllPitches();
+                }
+
+                // Update menu
+                this.updateActiveMenu(sectionId);
+            }
+
+            updateActiveMenu(sectionId) {
+                document.querySelectorAll('.nav-menu li').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                let menuItem;
+                switch(sectionId) {
+                    case 'home-section': menuItem = document.getElementById('nav-home'); break;
+                    case 'pitches-section': menuItem = document.getElementById('nav-pitches'); break;
+                    case 'bookings-section': menuItem = document.getElementById('nav-bookings'); break;
+                    case 'new-booking-section': menuItem = document.getElementById('nav-new-booking'); break;
+                }
+
+                if (menuItem) menuItem.classList.add('active');
+            }
+
+            showLogin() {
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('register-section').classList.add('hidden');
+                document.getElementById('main-content').classList.add('hidden');
+                document.getElementById('login-form').reset();
+                this.updateActiveMenu('login');
+            }
+
+            showRegister() {
+                document.getElementById('register-section').classList.remove('hidden');
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('main-content').classList.add('hidden');
+                document.getElementById('register-form').reset();
+                this.updateActiveMenu('register');
+            }
+
+            updateUI() {
+                if (this.currentUser) {
+                    document.getElementById('main-content').classList.remove('hidden');
+                    document.getElementById('login-section').classList.add('hidden');
+                    document.getElementById('register-section').classList.add('hidden');
+                    document.getElementById('btn-login').classList.add('hidden');
+                    document.getElementById('btn-logout').classList.remove('hidden');
+
+                    document.getElementById('user-display-name').textContent = this.currentUser.name;
+                    document.getElementById('user-display-email').textContent = this.currentUser.email;
+                    document.getElementById('user-display-phone').textContent = this.currentUser.phone;
+
+                    this.showSection('home-section');
+                } else {
+                    document.getElementById('main-content').classList.add('hidden');
+                    document.getElementById('btn-login').classList.remove('hidden');
+                    document.getElementById('btn-logout').classList.add('hidden');
+                    this.showLogin();
+                }
+            }
+
+            handleLogin(e) {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+
+                if (!email || !password) {
+                    this.showMessage('login-message', 'Harap isi semua field', 'error');
+                    return;
+                }
+
+                const user = this.users.find(u => u.email === email);
+                
+                if (!user) {
+                    this.showMessage('login-message', 'Email tidak terdaftar', 'error');
+                    return;
+                }
+
+                if (!user.verifyPassword(password)) {
+                    this.showMessage('login-message', 'Password salah', 'error');
+                    return;
+                }
+
+                this.currentUser = user;
+                this.saveData();
+                this.updateUI();
+                this.showMessage('login-message', 'Login berhasil!', 'success');
+                document.getElementById('login-form').reset();
+            }
+
+            handleRegister(e) {
+                e.preventDefault();
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const phone = document.getElementById('register-phone').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+
+                if (!name || !email || !phone || !password || !confirmPassword) {
+                    this.showMessage('register-message', 'Harap isi semua field', 'error');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    this.showMessage('register-message', 'Password tidak cocok', 'error');
+                    return;
+                }
+
+                if (this.users.some(u => u.email === email)) {
+                    this.showMessage('register-message', 'Email sudah terdaftar', 'error');
+                    return;
+                }
+
+                const newUser = new User(Date.now(), name, email, phone, password);
+                this.users.push(newUser);
+                this.saveData();
+                this.showMessage('register-message', 'Registrasi berhasil! Silakan login.', 'success');
+                document.getElementById('register-form').reset();
+                
+                setTimeout(() => this.showLogin(), 2000);
+            }
+
+            handleBooking(e) {
+                e.preventDefault();
+
+                if (!this.currentUser) {
+                    this.showMessage('booking-message', 'Anda harus login terlebih dahulu', 'error');
+                    return;
+                }
+
+                const pitchId = parseInt(document.getElementById('booking-pitch').value);
+                const date = document.getElementById('booking-date').value;
+                const duration = parseInt(document.getElementById('booking-duration').value);
+                const selectedTimeSlot = document.querySelector('.time-slot.selected');
+
+                if (!selectedTimeSlot) {
+                    this.showMessage('booking-message', 'Pilih waktu terlebih dahulu', 'error');
+                    return;
+                }
+
+                const time = selectedTimeSlot.dataset.time;
+                const pitch = this.pitches.find(p => p.id === pitchId);
+
+                if (!pitch) {
+                    this.showMessage('booking-message', 'Lapangan tidak ditemukan', 'error');
+                    return;
+                }
+
+                if (!pitch.isAvailable(date, time, duration)) {
+                    this.showMessage('booking-message', 'Waktu yang dipilih tidak tersedia', 'error');
+                    return;
+                }
+
+                const totalPrice = pitch.calculatePrice(duration);
+                const bookingId = Date.now();
+                const booking = new Booking(
+                    bookingId,
+                    this.currentUser.id,
+                    pitchId,
+                    pitch.name,
+                    date,
+                    time,
+                    duration,
+                    totalPrice,
+                    'confirmed'
+                );
+
+                this.currentUser.addBooking(booking);
+                pitch.bookTime(date, time, duration);
+                this.saveData();
+
+                this.showMessage('booking-message', `Booking berhasil! Total: Rp ${totalPrice.toLocaleString()}`, 'success');
+                document.getElementById('booking-form').reset();
+                this.setDefaultDate();
+                this.initBookingForm();
+                
+                this.showRecentBookings();
+                this.showUserBookings();
+                this.renderAvailablePitches();
+                
+                setTimeout(() => this.showSection('bookings-section'), 2000);
+            }
+
+            logout() {
+                this.currentUser = null;
+                this.saveData();
+                this.updateUI();
+                this.showMessage('login-message', 'Logout berhasil', 'success');
+            }
+
+            // INI YANG DIPERBAIKI - TIME SLOTS
+            initBookingForm() {
+                this.loadPitchOptions();
+                this.updateTimeSlots();
+                this.updateTotalPrice();
+            }
+
+            loadPitchOptions() {
+                const select = document.getElementById('booking-pitch');
+                select.innerHTML = '<option value="">-- Pilih Lapangan --</option>';
+                
+                this.pitches.forEach(pitch => {
+                    const option = document.createElement('option');
+                    option.value = pitch.id;
+                    option.textContent = `${pitch.name} (${pitch.type}) - Rp ${pitch.pricePerHour.toLocaleString()}/jam`;
+                    select.appendChild(option);
+                });
+            }
+
+            // METHOD UTAMA YANG DIPERBAIKI - updateTimeSlots()
+            updateTimeSlots() {
+                const pitchId = document.getElementById('booking-pitch').value;
+                const date = document.getElementById('booking-date').value;
+                const duration = parseInt(document.getElementById('booking-duration').value);
+                const timeSlotsContainer = document.getElementById('time-slots');
+                
+                // Reset container
+                timeSlotsContainer.innerHTML = '';
+                
+                if (!pitchId || !date) {
+                    timeSlotsContainer.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 20px; color: #666;">
+                            Pilih lapangan dan tanggal terlebih dahulu
+                        </div>`;
+                    return;
+                }
+                
+                const pitch = this.pitches.find(p => p.id === parseInt(pitchId));
+                if (!pitch) return;
+                
+                // Dapatkan slot yang tersedia
+                const availableSlots = pitch.getAvailableSlots(date, duration);
+                
+                if (availableSlots.length === 0) {
+                    timeSlotsContainer.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 20px; color: #666;">
+                            Tidak ada slot tersedia untuk tanggal ini
+                        </div>`;
+                    return;
+                }
+                
+                // Buat array semua slot jam
+                const allSlots = [];
+                for (let hour = 8; hour <= 22; hour++) {
+                    if (hour + duration > 22) continue;
+                    allSlots.push(`${hour.toString().padStart(2, '0')}:00`);
+                }
+                
+                // Render semua slot
+                allSlots.forEach(time => {
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = 'time-slot';
+                    slotDiv.dataset.time = time;
+                    slotDiv.textContent = time;
+                    
+                    if (availableSlots.includes(time)) {
+                        slotDiv.classList.add('available');
+                        slotDiv.title = 'Tersedia';
+                        
+                        slotDiv.addEventListener('click', () => {
+                            // Hapus selected sebelumnya
+                            document.querySelectorAll('.time-slot').forEach(s => {
+                                s.classList.remove('selected');
+                            });
+                            
+                            // Tandai yang dipilih
+                            slotDiv.classList.add('selected');
+                            this.updateTotalPrice();
+                        });
+                    } else {
+                        slotDiv.classList.add('booked');
+                        slotDiv.title = 'Sudah dibooking';
+                        slotDiv.style.cursor = 'not-allowed';
+                        slotDiv.style.opacity = '0.6';
+                    }
+                    
+                    timeSlotsContainer.appendChild(slotDiv);
+                });
+                
+                this.updateTotalPrice();
+            }
+
+            updateTotalPrice() {
+                const pitchId = document.getElementById('booking-pitch').value;
+                const duration = parseInt(document.getElementById('booking-duration').value);
+                
+                if (!pitchId) {
+                    document.getElementById('booking-total').value = 'Rp 0';
+                    return;
+                }
+                
+                const pitch = this.pitches.find(p => p.id === parseInt(pitchId));
+                if (!pitch) return;
+                
+                const totalPrice = pitch.calculatePrice(duration);
+                document.getElementById('booking-total').value = `Rp ${totalPrice.toLocaleString()}`;
+            }
+
+            showUserBookings() {
+                if (!this.currentUser) return;
+                
+                const container = document.getElementById('user-bookings');
+                const bookings = this.currentUser.getBookings();
+                
+                if (bookings.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+                            <h3>Belum ada booking</h3>
+                            <p>Silakan buat booking pertama Anda!</p>
+                            <button class="btn btn-primary" onclick="app.showSection('new-booking-section')">
+                                Buat Booking
+                            </button>
+                        </div>`;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                bookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                       .forEach(booking => {
+                    const card = document.createElement('div');
+                    card.className = 'booking-card';
+                    card.innerHTML = `
+                        <h3>${booking.pitchName}</h3>
+                        <p><strong>📅 Tanggal:</strong> ${booking.date}</p>
+                        <p><strong>⏰ Waktu:</strong> ${booking.time} (${booking.duration} jam)</p>
+                        <p><strong>💰 Total:</strong> Rp ${booking.totalPrice.toLocaleString()}</p>
+                        <p><strong>📝 Status:</strong> 
+                            <span class="status confirmed">Dikonfirmasi</span>
+                        </p>
+                        <p><strong>🆔 ID Booking:</strong> ${booking.id}</p>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            showRecentBookings() {
+                if (!this.currentUser) return;
+                
+                const container = document.getElementById('recent-bookings');
+                const bookings = this.currentUser.getBookings()
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    .slice(0, 3);
+                
+                if (bookings.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+                            <h3>Belum ada booking</h3>
+                            <p>Mulai booking lapangan favorit Anda!</p>
+                        </div>`;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                bookings.forEach(booking => {
+                    const card = document.createElement('div');
+                    card.className = 'booking-card';
+                    card.innerHTML = `
+                        <h3>${booking.pitchName}</h3>
+                        <p><strong>📅 Tanggal:</strong> ${booking.date}</p>
+                        <p><strong>⏰ Waktu:</strong> ${booking.time}</p>
+                        <p><strong>💰 Total:</strong> Rp ${booking.totalPrice.toLocaleString()}</p>
+                        <span class="status confirmed">Dikonfirmasi</span>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            // LOAD PITCHES - DIPERBAIKI
+            loadPitches() {
+                // Inisialisasi data lapangan jika kosong
+                if (this.pitches.length === 0) {
+                    console.log('Creating new pitches data...');
+                    
+                    this.pitches = [
+                        new FutsalPitch(1, "Lapangan A", "Vinyl", 150000, 
+                            ["Pencahayaan LED", "Rumput sintetis premium", "Tribun penonton"], 
+                            "Lapangan standar nasional dengan rumput sintetis kualitas terbaik"),
+                        new FutsalPitch(2, "Lapangan B", "Parquet", 120000, 
+                            ["Pencahayaan standar", "Parkir luas", "Kamar ganti"], 
+                            "Lapangan dengan lantai parquet untuk permainan yang nyaman"),
+                        new FutsalPitch(3, "Lapangan C", "Turf", 100000, 
+                            ["Pencahayaan standar", "Toilet", "Musholla"], 
+                            "Lapangan ekonomis dengan kualitas terjamin"),
+                        new FutsalPitch(4, "Lapangan VIP", "Vinyl Premium", 200000, 
+                            ["Pencahayaan profesional", "AC ruang ganti", "Cafe", "WiFi"], 
+                            "Lapangan premium dengan fasilitas lengkap untuk kompetisi"),
+                        new FutsalPitch(5, "Lapangan Mini", "Turf", 80000, 
+                            ["Untuk anak-anak", "Aman dan nyaman"], 
+                            "Lapangan khusus untuk anak-anak usia 5-12 tahun"),
+                        new FutsalPitch(6, "Lapangan Turnamen", "Vinyl Pro", 180000, 
+                            ["Standar internasional", "Papan skor digital", "Kursi wasit"], 
+                            "Lapangan khusus untuk turnamen dan kompetisi resmi")
+                    ];
+                    
+                    // TAMBAHKAN DUMMY BOOKING YANG PASTI BEKERJA
+                    const today = new Date();
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+                    
+                    console.log('Adding dummy booking for tomorrow:', tomorrowStr);
+                    
+                    // Hanya tambahkan 1 booking di Lapangan A untuk testing
+                    const lapanganA = this.pitches[0];
+                    lapanganA.bookTime(tomorrowStr, '14:00', 2); // 14:00-16:00
+                    
+                    console.log('Lapangan A booked slots:', lapanganA.bookedSlots);
+                    console.log('Available slots for tomorrow, 2 hours:', lapanganA.getAvailableSlots(tomorrowStr, 2));
+                }
+                
+                this.renderAllPitches();
+                this.renderAvailablePitches();
+            }
+
+            renderAllPitches() {
+                const container = document.getElementById('all-pitches');
+                container.innerHTML = '';
+                
+                this.pitches.forEach(pitch => {
+                    const card = document.createElement('div');
+                    card.className = 'pitch-card';
+                    card.innerHTML = `
+                        <div class="pitch-image">
+                            ${pitch.name}
+                        </div>
+                        <div class="pitch-info">
+                            <h3>${pitch.name}</h3>
+                            <p>${pitch.description}</p>
+                            <p><strong>🎯 Tipe:</strong> ${pitch.type}</p>
+                            <p><strong>🏆 Fasilitas:</strong> ${pitch.facilities.join(', ')}</p>
+                            <div class="price">Rp ${pitch.pricePerHour.toLocaleString()}/jam</div>
+                            <button class="btn btn-primary book-pitch-btn" data-id="${pitch.id}">
+                                Booking Sekarang
+                            </button>
+                        </div>
+                    `;
+                    
+                    card.querySelector('.book-pitch-btn').addEventListener('click', () => {
+                        this.showSection('new-booking-section');
+                        document.getElementById('booking-pitch').value = pitch.id;
+                        // Tunggu sebentar agar DOM update, lalu refresh time slots
+                        setTimeout(() => this.updateTimeSlots(), 100);
+                    });
+                    
+                    container.appendChild(card);
+                });
+            }
+
+            renderAvailablePitches() {
+                const container = document.getElementById('available-pitches');
+                container.innerHTML = '';
+                
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrowStr = tomorrow.toISOString().split('T')[0];
+                
+                const availablePitches = this.pitches.filter(pitch => {
+                    const slots = pitch.getAvailableSlots(tomorrowStr, 2);
+                    return slots.length > 0;
+                });
+                
+                if (availablePitches.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+                            <h3>Tidak ada lapangan tersedia untuk besok</h3>
+                            <p>Coba pilih tanggal lain</p>
+                        </div>`;
+                    return;
+                }
+                
+                availablePitches.slice(0, 3).forEach(pitch => {
+                    const pitchCard = this.createPitchCard(pitch);
+                    container.appendChild(pitchCard);
+                });
+            }
+
+            createPitchCard(pitch) {
+                const card = document.createElement('div');
+                card.className = 'pitch-card';
+                card.innerHTML = `
+                    <div class="pitch-image">
+                        ${pitch.name}
+                    </div>
+                    <div class="pitch-info">
+                        <h3>${pitch.name}</h3>
+                        <p>${pitch.description}</p>
+                        <p><strong>🎯 Tipe:</strong> ${pitch.type}</p>
+                        <p><strong>🏆 Fasilitas:</strong> ${pitch.facilities.join(', ')}</p>
+                        <div class="price">Rp ${pitch.pricePerHour.toLocaleString()}/jam</div>
+                        <button class="btn btn-primary book-pitch-btn" data-id="${pitch.id}">
+                            Booking Sekarang
+                        </button>
+                    </div>
+                `;
+                
+                card.querySelector('.book-pitch-btn').addEventListener('click', () => {
+                    this.showSection('new-booking-section');
+                    document.getElementById('booking-pitch').value = pitch.id;
+                    setTimeout(() => this.updateTimeSlots(), 100);
+                });
+                
+                return card;
+            }
+
+            showMessage(elementId, message, type = 'success') {
+                const element = document.getElementById(elementId);
+                element.textContent = message;
+                element.className = `alert alert-${type}`;
+                element.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    element.classList.add('hidden');
+                }, 5000);
+            }
+
+            getStatusText(status) {
+                const statusMap = {
+                    'pending': 'Menunggu Konfirmasi',
+                    'confirmed': 'Dikonfirmasi',
+                    'cancelled': 'Dibatalkan'
+                };
+                return statusMap[status] || status;
+            }
+
+            saveData() {
+                try {
+                    const data = {
+                        users: this.users.map(user => ({
+                            id: user.id,
+                            name: user.name,
+                            email: user.email,
+                            phone: user.phone,
+                            password: user.getPassword(),
+                            bookings: user.bookings,
+                            createdAt: user.createdAt
+                        })),
+                        pitches: this.pitches,
+                        currentUserId: this.currentUser ? this.currentUser.id : null
+                    };
+                    localStorage.setItem('futsalBookingData', JSON.stringify(data));
+                } catch (error) {
+                    console.error('Error saving data:', error);
+                }
+            }
+
+            loadData() {
+                try {
+                    const savedData = localStorage.getItem('futsalBookingData');
+                    if (savedData) {
+                        const data = JSON.parse(savedData);
+                        
+                        // Load users
+                        this.users = data.users.map(userData => {
+                            const user = new User(
+                                userData.id,
+                                userData.name,
+                                userData.email,
+                                userData.phone,
+                                userData.password
+                            );
+                            user.bookings = userData.bookings || [];
+                            user.createdAt = userData.createdAt;
+                            return user;
+                        });
+                        
+                        // Load pitches - PERBAIKAN BESAR DISINI
+                        this.pitches = data.pitches.map(pitchData => {
+                            const pitch = new FutsalPitch(
+                                pitchData.id,
+                                pitchData.name,
+                                pitchData.type,
+                                pitchData.pricePerHour,
+                                pitchData.facilities,
+                                pitchData.description
+                            );
+                            // Pastikan bookedSlots dimuat dengan benar
+                            pitch.bookedSlots = pitchData.bookedSlots || {};
+                            return pitch;
+                        });
+                        
+                        // Load current user
+                        if (data.currentUserId) {
+                            this.currentUser = this.users.find(u => u.id === data.currentUserId);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    this.users = [];
+                    this.pitches = [];
+                    this.currentUser = null;
+                }
+                
+                // Buat admin default
+                this.createDefaultAdmin();
+            }
+
+            createDefaultAdmin() {
+                const adminExists = this.users.some(u => u.email === 'admin@futsal.com');
+                if (!adminExists) {
+                    const admin = new Admin(
+                        999,
+                        'Admin FutsalPro',
+                        'admin@futsal.com',
+                        '081234567890',
+                        'admin123'
+                    );
+                    this.users.push(admin);
+                }
+            }
+        }
+
+        // Inisialisasi aplikasi
+        const app = new FutsalBookingApp();
+        window.app = app;
+    </script>
+</body>
+</html>
